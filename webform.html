@@ -1,0 +1,756 @@
+<html>
+    <head>
+        <title> Sample Form for NJCCIC </title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/style.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javaScript">
+
+            function validateForm(){
+                var interests = document.getElementById('additional-interests');
+            }
+
+            function hideFormFields(toHide){
+                for ( var i = 0; i < toHide.length; i++ ){
+                    document.getElementById(toHide[i]).style.display = 'none';
+                }
+            }
+
+            function showFormFields(toShow){
+                for ( var i = 0; i < toShow.length; i++ ){
+                    document.getElementById(toShow[i]).style.display = 'block';
+                }
+            }
+
+            function clearFormFields(fieldsToClear){
+                for ( var i = 0; i < fieldsToClear.length; i++){
+                    var formField = document.getElementById(fieldsToClear[i]);
+                    if ( formField && formField.value != "" ){
+                        formField.value = "";
+                    }
+                }
+            }
+
+            function setFormFields() {
+                var affiliation = document.forms["myForm"]["affiliation"].value;
+                var toHide = [];
+                var toShow = [];
+                // Clear out all of the conditional fields upon changing the user's affiliation
+                var fieldsToClear = ["countySelect", "countrySelect", "jurisdiction", "primarySector", "primarySectorOther", "primarySectorSpecial"];
+                if (affiliation == "International" ) {
+
+                    toHide = [ "us-state-select", "county-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests"];
+                    toShow = [ "country-select" ];
+
+                } else if ( affiliation == "Private Citizen" ){
+                    toHide = ["country-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special" ];
+                    toShow = ["us-state-select" ];
+
+
+                } else {
+
+                    toHide = ["country-select", "county-select", "jurisdiction-select"];
+                    toShow = ["us-state-select", "primary-sector-select", "additional-interests"];
+
+                    if ( affiliation == "Public Sector"  ){
+                        toShow.push("jurisdiction-select");
+                    }// else if ( affiliation == "Private Sector" ){
+
+                    //}
+                }
+
+                hideFormFields(toHide);
+                showFormFields(toShow);
+                clearFormFields(fieldsToClear);
+
+
+            }
+
+            function showNJCounties(){
+                var state = document.forms["myForm"]["stateSelect"].value;
+                if (state == "NJ"){
+                    showFormFields(["county-select"]);
+                } else {
+                    hideFormFields(["county-select"]);
+                    clearFormFields(["countySelect"]);
+                }
+            }
+
+            function loadSectorSubCat(){
+                var sector = document.forms["myForm"]["primarySector"].value;
+                if ( sector == "Other"){
+                    showFormFields(["primary-sector-other"]);
+                    hideFormFields(["emergency-services-select"]);
+                    clearFormFields(["emergencyServices"]);
+                } else if ( sector == "Emergency Services"){
+                    showFormFields(["emergency-services-select"]);
+                    hideFormFields(["primary-sector-other"]);
+                    clearFormFields(["primarySectorOther", "primarySectorSpecial"]);
+                } else {
+                    hideFormFields(["emergency-services-select", "primary-sector-other", "primary-sector-special"]);
+                    clearFormFields(["emergencyServices", "primarySectorOther", "primarySectorSpecial"]);
+                }
+            }
+
+            function loadOtherTextBox(){
+                var sectorSelect = document.forms["myForm"]["primarySectorOther"].value;
+                if ( sectorSelect == "Other"){
+                    showFormFields(["primary-sector-special"]);
+                } else {
+                    hideFormFields(["primary-sector-special"]);
+                    clearFormFields(["primarySectorSpecial"]);
+                }
+            }
+
+            function validatePhone(whatNumber){
+                var phoneNumber = document.forms["myForm"][whatNumber].value;
+                var re = /^(\+?\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+                var OK = re.exec(phoneNumber);
+                if ( !OK ){
+                    alert('Invalid ' +whatNumber+' number, please use the format: (123)456-7890');
+                    return false
+                } 
+            }
+
+            function validateTextField(whatField){
+                var fieldValue = document.forms["myForm"][whatField].value;
+                var re = /['"\(\)%&]/;
+                var form2field = { 'inputFirstName': 'First Name',
+                                   'inputMiddleInitial': 'Middle Initial',
+                                   'inputLastName': 'Last Name',
+                                   'titleField': 'Title'};
+                var containsInvlaidChars = re.exec(fieldValue);
+                if ( containsInvlaidChars ){
+                    alert('Invlid characters found in "'+form2field[whatField]+'", please do not include special characters!');
+                    return false;
+                }
+            }
+
+        </script>
+
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <form id="myForm" onsubmit="return validateForm()" action="display.html" method="GET">
+           <div class="form-group">
+                <label for="affiliation">Affiliation *</label>
+                <select id="affiliation" class="form-control" onchange="setFormFields()">
+                    <option value=""></option>
+                    <option value="Private Sector">Private Sector</option>
+                    <option value="Public Sector">Public Sector</option>
+                    <option value="Private Citizen">Private Citizen</option>
+                    <option value="International">International</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email address *</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" required="true">
+            </div>
+            <div class="form-group">
+                <label for="inputFirstName">First Name</label>
+                <input type="text" class="form-control" id="inputFirstName" required="true" onchange="validateTextField('inputFirstName')">
+            </div>
+            <div class="form-group">
+                <label for="inputMiddleInitial">Middle Initial</label>
+                <input type="text" class="form-control" id="inputMiddleInitial" maxlength="1" onchange="validateTextField('inputMiddleInitial')">
+            </div>
+            <div class="form-group">
+                <label for="inputLastName">Last Name</label>
+                <input type="text" class="form-control" id="inputLastName" required="true" onchange="validateTextField('inputLastName')">
+            </div>
+            <div class="form-group">
+                <label for="suffix">Suffix</label>
+                <select id="suffix" class="form-control">
+                    <option value=""></option>
+                    <option value="JR">JR</option>
+                    <option value="SR">SR</option>
+                    <option value="I">I</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                    <option value="IV">IV</option>
+                    <option value="V">V</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="titleField">Title</label>
+                <input type="text" class="form-control" id="titleField" onchange="validateTextField('titleField')">
+            </div>
+            <div class="form-group">
+                <label for="OrganizationField">Ogranization/Agency</label>
+                <input type="text" class="form-control" id="organizationField">
+            </div>
+            <div class="form-group">
+                <label for="addressField">Address</label>
+                <input type="text" class="form-control" id="addressField">
+            </div>
+            <div class="form-group">
+                <label for="cityField">City</label>
+                <input type="text" class="form-control" id="cityField">
+            </div>
+            <div class="form-group" id="us-state-select">
+                <label for="stateSelect">State</label>
+                <select id="stateSelect" class="form-control" onchange="showNJCounties()">
+                    <option value=""></option>
+                    <option value="AL">AL</option>
+                    <option value="AK">AK</option>
+                    <option value="AZ">AZ</option>
+                    <option value="AR">AR</option>
+                    <option value="CA">CA</option>
+                    <option value="CO">CO</option>
+                    <option value="CT">CT</option>
+                    <option value="DE">DE</option>
+                    <option value="FL">FL</option>
+                    <option value="GA">GA</option>
+                    <option value="HI">HI</option>
+                    <option value="ID">ID</option>
+                    <option value="IL">IL</option>
+                    <option value="IN">IN</option>
+                    <option value="IA">IA</option>
+                    <option value="KS">KS</option>
+                    <option value="KY">KY</option>
+                    <option value="LA">LA</option>
+                    <option value="ME">ME</option>
+                    <option value="MD">MD</option>
+                    <option value="MA">MA</option>
+                    <option value="MI">MI</option>
+                    <option value="MN">MN</option>
+                    <option value="MS">MS</option>
+                    <option value="MO">MO</option>
+                    <option value="MT">MT</option>
+                    <option value="NE">NE</option>
+                    <option value="NV">NV</option>
+                    <option value="NH">NH</option>
+                    <option value="NJ">NJ</option>
+                    <option value="NM">NM</option>
+                    <option value="NY">NY</option>
+                    <option value="NC">NC</option>
+                    <option value="ND">ND</option>
+                    <option value="OH">OH</option>
+                    <option value="OK">OK</option>
+                    <option value="OR">OR</option>
+                    <option value="PA">PA</option>
+                    <option value="RI">RI</option>
+                    <option value="SC">SC</option>
+                    <option value="SD">SD</option>
+                    <option value="TN">TN</option>
+                    <option value="TX">TX</option>
+                    <option value="UT">UT</option>
+                    <option value="VT">VT</option>
+                    <option value="VA">VA</option>
+                    <option value="WA">WA</option>
+                    <option value="WV">WV</option>
+                    <option value="WI">WI</option>
+                    <option value="WY">WY</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="zipField">Zip/Postal Code *</label>
+                <input type="text" class="form-control" id="zipField" required="true" pattern="[0-9]{5}">
+            </div>
+            <div class="form-group" id="county-select" style="display:none;">
+                <label for="countySelect">County</label>
+                <select id="countySelect" class="form-control" onchange="showNJCounties">
+                    <option value="" selected="selected"></option>
+                    <option value="Atlantic">Atlantic</option>
+                    <option value="Bergen">Bergen</option>
+                    <option value="Burlington">Burlington</option>
+                    <option value="Camden">Camden</option>
+                    <option value="Cape May">Cape May</option>
+                    <option value="Cumberland">Cumberland</option>
+                    <option value="Essex">Essex</option>
+                    <option value="Gloucester">Gloucester</option>
+                    <option value="Hudson">Hudson</option>
+                    <option value="Hunterdon">Hunterdon</option>
+                    <option value="Mercer">Mercer</option>
+                    <option value="Middlesex">Middlesex</option>
+                    <option value="Monmouth">Monmouth</option>
+                    <option value="Morris">Morris</option>
+                    <option value="Ocean">Ocean</option>
+                    <option value="Passaic">Passaic</option>
+                    <option value="Salem">Salem</option>
+                    <option value="Somerset">Somerset</option>
+                    <option value="Sussex">Sussex</option>
+                    <option value="Union">Union</option>
+                    <option value="Warren">Warren</option>
+                </select>
+            </div>
+           <div class="form-group" id="country-select" style="display:none;">
+                <label for="countrySelect">Country</label>
+                <select id="countrySelect" class="form-control">
+                    <option value="US" selected="selected">United States</option>
+                    <option value="AF">Afghanistan</option>
+                    <option value="AX">Åland Islands</option>
+                    <option value="AL">Albania</option>
+                    <option value="DZ">Algeria</option>
+                    <option value="AS">American Samoa</option>
+                    <option value="AD">Andorra</option>
+                    <option value="AO">Angola</option>
+                    <option value="AI">Anguilla</option>
+                    <option value="AQ">Antarctica</option>
+                    <option value="AG">Antigua and Barbuda</option>
+                    <option value="AR">Argentina</option>
+                    <option value="AM">Armenia</option>
+                    <option value="AW">Aruba</option>
+                    <option value="AU">Australia</option>
+                    <option value="AT">Austria</option>
+                    <option value="AZ">Azerbaijan</option>
+                    <option value="BS">Bahamas</option>
+                    <option value="BH">Bahrain</option>
+                    <option value="BD">Bangladesh</option>
+                    <option value="BB">Barbados</option>
+                    <option value="BY">Belarus</option>
+                    <option value="BE">Belgium</option>
+                    <option value="BZ">Belize</option>
+                    <option value="BJ">Benin</option>
+                    <option value="BM">Bermuda</option>
+                    <option value="BT">Bhutan</option>
+                    <option value="BO">Bolivia, Plurinational State of</option>
+                    <option value="BQ">Bonaire, Sint Eustatius and Saba</option>
+                    <option value="BA">Bosnia and Herzegovina</option>
+                    <option value="BW">Botswana</option>
+                    <option value="BV">Bouvet Island</option>
+                    <option value="BR">Brazil</option>
+                    <option value="IO">British Indian Ocean Territory</option>
+                    <option value="BN">Brunei Darussalam</option>
+                    <option value="BG">Bulgaria</option>
+                    <option value="BF">Burkina Faso</option>
+                    <option value="BI">Burundi</option>
+                    <option value="KH">Cambodia</option>
+                    <option value="CM">Cameroon</option>
+                    <option value="CA">Canada</option>
+                    <option value="CV">Cape Verde</option>
+                    <option value="KY">Cayman Islands</option>
+                    <option value="CF">Central African Republic</option>
+                    <option value="TD">Chad</option>
+                    <option value="CL">Chile</option>
+                    <option value="CN">China</option>
+                    <option value="CX">Christmas Island</option>
+                    <option value="CC">Cocos (Keeling) Islands</option>
+                    <option value="CO">Colombia</option>
+                    <option value="KM">Comoros</option>
+                    <option value="CG">Congo</option>
+                    <option value="CD">Congo, the Democratic Republic of the</option>
+                    <option value="CK">Cook Islands</option>
+                    <option value="CR">Costa Rica</option>
+                    <option value="CI">Côte d'Ivo</option>ire</option>
+                    <option value="HR">Croatia</option>
+                    <option value="CU">Cuba</option>
+                    <option value="CW">Curaçao</option>
+                    <option value="CY">Cyprus</option>
+                    <option value="CZ">Czech Republic</option>
+                    <option value="DK">Denmark</option>
+                    <option value="DJ">Djibouti</option>
+                    <option value="DM">Dominica</option>
+                    <option value="DO">Dominican Republic</option>
+                    <option value="EC">Ecuador</option>
+                    <option value="EG">Egypt</option>
+                    <option value="SV">El Salvador</option>
+                    <option value="GQ">Equatorial Guinea</option>
+                    <option value="ER">Eritrea</option>
+                    <option value="EE">Estonia</option>
+                    <option value="ET">Ethiopia</option>
+                    <option value="FK">Falkland Islands (Malvinas)</option>
+                    <option value="FO">Faroe Islands</option>
+                    <option value="FJ">Fiji</option>
+                    <option value="FI">Finland</option>
+                    <option value="FR">France</option>
+                    <option value="GF">French Guiana</option>
+                    <option value="PF">French Polynesia</option>
+                    <option value="TF">French Southern Territories</option>
+                    <option value="GA">Gabon</option>
+                    <option value="GM">Gambia</option>
+                    <option value="GE">Georgia</option>
+                    <option value="DE">Germany</option>
+                    <option value="GH">Ghana</option>
+                    <option value="GI">Gibraltar</option>
+                    <option value="GR">Greece</option>
+                    <option value="GL">Greenland</option>
+                    <option value="GD">Grenada</option>
+                    <option value="GP">Guadeloupe</option>
+                    <option value="GU">Guam</option>
+                    <option value="GT">Guatemala</option>
+                    <option value="GG">Guernsey</option>
+                    <option value="GN">Guinea</option>
+                    <option value="GW">Guinea-Bissau</option>
+                    <option value="GY">Guyana</option>
+                    <option value="HT">Haiti</option>
+                    <option value="HM">Heard Island and McDonald Islands</option>
+                    <option value="VA">Holy See (Vatican City State)</option>
+                    <option value="HN">Honduras</option>
+                    <option value="HK">Hong Kong</option>
+                    <option value="HU">Hungary</option>
+                    <option value="IS">Iceland</option>
+                    <option value="IN">India</option>
+                    <option value="ID">Indonesia</option>
+                    <option value="IR">Iran, Islamic Republic of</option>
+                    <option value="IQ">Iraq</option>
+                    <option value="IE">Ireland</option>
+                    <option value="IM">Isle of Man</option>
+                    <option value="IL">Israel</option>
+                    <option value="IT">Italy</option>
+                    <option value="JM">Jamaica</option>
+                    <option value="JP">Japan</option>
+                    <option value="JE">Jersey</option>
+                    <option value="JO">Jordan</option>
+                    <option value="KZ">Kazakhstan</option>
+                    <option value="KE">Kenya</option>
+                    <option value="KI">Kiribati</option>
+                    <option value="KP">Korea, Democratic People's Republic of</option>
+                    <option value="KR">Korea, Republic of</option>
+                    <option value="KW">Kuwait</option>
+                    <option value="KG">Kyrgyzstan</option>
+                    <option value="LA">Lao People's Democratic Republic</option>
+                    <option value="LV">Latvia</option>
+                    <option value="LB">Lebanon</option>
+                    <option value="LS">Lesotho</option>
+                    <option value="LR">Liberia</option>
+                    <option value="LY">Libya</option>
+                    <option value="LI">Liechtenstein</option>
+                    <option value="LT">Lithuania</option>
+                    <option value="LU">Luxembourg</option>
+                    <option value="MO">Macao</option>
+                    <option value="MK">Macedonia, the former Yugoslav Republic of</option>
+                    <option value="MG">Madagascar</option>
+                    <option value="MW">Malawi</option>
+                    <option value="MY">Malaysia</option>
+                    <option value="MV">Maldives</option>
+                    <option value="ML">Mali</option>
+                    <option value="MT">Malta</option>
+                    <option value="MH">Marshall Islands</option>
+                    <option value="MQ">Martinique</option>
+                    <option value="MR">Mauritania</option>
+                    <option value="MU">Mauritius</option>
+                    <option value="YT">Mayotte</option>
+                    <option value="MX">Mexico</option>
+                    <option value="FM">Micronesia, Federated States of</option>
+                    <option value="MD">Moldova, Republic of</option>
+                    <option value="MC">Monaco</option>
+                    <option value="MN">Mongolia</option>
+                    <option value="ME">Montenegro</option>
+                    <option value="MS">Montserrat</option>
+                    <option value="MA">Morocco</option>
+                    <option value="MZ">Mozambique</option>
+                    <option value="MM">Myanmar</option>
+                    <option value="NA">Namibia</option>
+                    <option value="NR">Nauru</option>
+                    <option value="NP">Nepal</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="NC">New Caledonia</option>
+                    <option value="NZ">New Zealand</option>
+                    <option value="NI">Nicaragua</option>
+                    <option value="NE">Niger</option>
+                    <option value="NG">Nigeria</option>
+                    <option value="NU">Niue</option>
+                    <option value="NF">Norfolk Island</option>
+                    <option value="MP">Northern Mariana Islands</option>
+                    <option value="NO">Norway</option>
+                    <option value="OM">Oman</option>
+                    <option value="PK">Pakistan</option>
+                    <option value="PW">Palau</option>
+                    <option value="PS">Palestinian Territory, Occupied</option>
+                    <option value="PA">Panama</option>
+                    <option value="PG">Papua New Guinea</option>
+                    <option value="PY">Paraguay</option>
+                    <option value="PE">Peru</option>
+                    <option value="PH">Philippines</option>
+                    <option value="PN">Pitcairn</option>
+                    <option value="PL">Poland</option>
+                    <option value="PT">Portugal</option>
+                    <option value="PR">Puerto Rico</option>
+                    <option value="QA">Qatar</option>
+                    <option value="RE">Réunion</option>
+                    <option value="RO">Romania</option>
+                    <option value="RU">Russian Federation</option>
+                    <option value="RW">Rwanda</option>
+                    <option value="BL">Saint Barthélemy</option>
+                    <option value="SH">Saint Helena, Ascension and Tristan da Cunha</option>
+                    <option value="KN">Saint Kitts and Nevis</option>
+                    <option value="LC">Saint Lucia</option>
+                    <option value="MF">Saint Martin (French part)</option>
+                    <option value="PM">Saint Pierre and Miquelon</option>
+                    <option value="VC">Saint Vincent and the Grenadines</option>
+                    <option value="WS">Samoa</option>
+                    <option value="SM">San Marino</option>
+                    <option value="ST">Sao Tome and Principe</option>
+                    <option value="SA">Saudi Arabia</option>
+                    <option value="SN">Senegal</option>
+                    <option value="RS">Serbia</option>
+                    <option value="SC">Seychelles</option>
+                    <option value="SL">Sierra Leone</option>
+                    <option value="SG">Singapore</option>
+                    <option value="SX">Sint Maarten (Dutch part)</option>
+                    <option value="SK">Slovakia</option>
+                    <option value="SI">Slovenia</option>
+                    <option value="SB">Solomon Islands</option>
+                    <option value="SO">Somalia</option>
+                    <option value="ZA">South Africa</option>
+                    <option value="GS">South Georgia and the South Sandwich Islands</option>
+                    <option value="SS">South Sudan</option>
+                    <option value="ES">Spain</option>
+                    <option value="LK">Sri Lanka</option>
+                    <option value="SD">Sudan</option>
+                    <option value="SR">Suriname</option>
+                    <option value="SJ">Svalbard and Jan Mayen</option>
+                    <option value="SZ">Swaziland</option>
+                    <option value="SE">Sweden</option>
+                    <option value="CH">Switzerland</option>
+                    <option value="SY">Syrian Arab Republic</option>
+                    <option value="TW">Taiwan, Province of China</option>
+                    <option value="TJ">Tajikistan</option>
+                    <option value="TZ">Tanzania, United Republic of</option>
+                    <option value="TH">Thailand</option>
+                    <option value="TL">Timor-Leste</option>
+                    <option value="TG">Togo</option>
+                    <option value="TK">Tokelau</option>
+                    <option value="TO">Tonga</option>
+                    <option value="TT">Trinidad and Tobago</option>
+                    <option value="TN">Tunisia</option>
+                    <option value="TR">Turkey</option>
+                    <option value="TM">Turkmenistan</option>
+                    <option value="TC">Turks and Caicos Islands</option>
+                    <option value="TV">Tuvalu</option>
+                    <option value="UG">Uganda</option>
+                    <option value="UA">Ukraine</option>
+                    <option value="AE">United Arab Emirates</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="UM">United States Minor Outlying Islands</option>
+                    <option value="UY">Uruguay</option>
+                    <option value="UZ">Uzbekistan</option>
+                    <option value="VU">Vanuatu</option>
+                    <option value="VE">Venezuela, Bolivarian Republic of</option>
+                    <option value="VN">Viet Nam</option>
+                    <option value="VG">Virgin Islands, British</option>
+                    <option value="VI">Virgin Islands, U.S.</option>
+                    <option value="WF">Wallis and Futuna</option>
+                    <option value="EH">Western Sahara</option>
+                    <option value="YE">Yemen</option>
+                    <option value="ZM">Zambia</option>
+                    <option value="ZW">Zimbabwe</option>
+                </select>
+            </div>
+            <div class="form-group" id="phone-field">
+                <label for="phone">Phone</label>
+                <!-- or set via JS -->
+                <input id="phone" type="text" class="form-control" onchange="validatePhone('phone')" />
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile</label>
+                <!-- or set via JS -->
+                <input id="mobile" class="form-control" type="text" onchange="validatePhone('mobile')"/>
+            </div>
+            <div class="form-group" id="jurisdiction-select" style="display:none;">
+                <label for="jurisdiction">Jurisdiction</label>
+                <select class="form-control" id="jurisdiction">
+                    <option value=""></option>
+                    <option value="Federal">Federal</option>
+                    <option value="State">State</option>
+                    <option value="County">County</option>
+                    <option value="Local">Local</option>
+                </select>
+            </div>
+           <div class="form-group" id="primary-sector-select" style="display:none;">
+                <label for="primarySector">Primary Sector</label>
+                <Select class="form-control" id="primarySector" onchange="loadSectorSubCat()">
+                    <option value="" selected="selected"></option>
+                    <option value="Chemical">Chemical</option>
+                    <option value="Commercial Facilities">Commercial Facilities</option>
+                    <option value="Communications">Communications</option>
+                    <option value="Critical Manufacturing">Critical Manufacturing</option>
+                    <option value="Dams">Dams</option>
+                    <option value="Defense Industrial Base">Defense Industrial Base</option>
+                    <option value="Emergency Services">Emergency Services </option>
+                    <option value="Energy">Energy</option>
+                    <option value="Financial Services">Financial Services</option>
+                    <option value="Food and Agriculture">Food and Agriculture</option>
+                    <option value="Government Facilities">Government Facilities</option>
+                    <option value="Healthcare and Public Health ">Healthcare and Public Health </option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Nuclear Reactors, Materials, and Waste">Nuclear Reactors, Materials, and Waste</option>
+                    <option value="Transportation Systems ">Transportation Systems </option>
+                    <option value="Water and Wastewater Systems ">Water and Wastewater Systems </option>
+                    <option value="Other">Other</option>
+                </Select>
+            </div>
+            <div class="form-group" id="primary-sector-other" style="display:none;">
+                <label for="primarySectorOther">Primary Sector Other</label>
+                <select class="form-control" id="primarySectorOther" onchange="loadOtherTextBox()">
+                    <option value="" selected="selected"></option>
+                    <option value="Auto Dealer">Auto Dealer</option>
+                    <option value="Chamber of Commerce">Chamber of Commerce</option>
+                    <option value="Charity">Charity</option>
+                    <option value="Construction">Construction</option>
+                    <option value="Consulting">Consulting</option>
+                    <option value="Distributor">Distributor</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Graphic Design">Graphic Design</option>
+                    <option value="Home Repair">Home Repair</option>
+                    <option value="Landscaping">Landscaping</option>
+                    <option value="Law Firm">Law Firm</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Pest Control">Pest Control</option>
+                    <option value="Private Security">Private Security</option>
+                    <option value="Publishing Company">Publishing Company</option>
+                    <option value="Research">Research</option>
+                    <option value="Risk Management">Risk Management</option>
+                    <option value="Scouting">Scouting</option>
+                    <option value="Test &amp; Measurement">Test &amp; Measurement</option>
+                    <option value="Travel Agent">Travel Agent</option>
+                    <option value="Waste Management">Waste Management</option>
+                    <option value="YMCA">YMCA</option>
+                    <option value="Other">I want to input my own</option>
+                </select>
+            </div>
+            <div class="form-group" id="primary-sector-special" style="display:none;">
+                <label for="primarySectorSpecial">Additional Functional Area</label>
+                <input type="text" name="primarySectorSpecial">
+            </div>
+            <div class="form-group" id="emergency-services-select" style="display:none;">
+                <label for="emergencyServices">Emergency Services</label>
+                <select class="form-control" id="emergencyServices">
+                    <option value="" selected="selected"></option>
+                    <option value="Alarm Company">Alarm Company</option>
+                    <option value="County Prosecutor's Office">County Prosecutor's Office</option>
+                    <option value="Emergency Management">Emergency Management</option>
+                    <option value="EMS">EMS</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Fusion Center">Fusion Center</option>
+                    <option value="Law Enforcement">Law Enforcement</option>
+                    <option value="National Center for Missing &amp; Exploited Children">National Center for Missing &amp; Exploited Children</option>
+                    <option value="Private Investigator">Private Investigator</option>
+                    <option value="Private Security">Private Security</option>
+                </select>
+            </div>
+            <div class="panel panel-defaul" id="additional-interests" style="display:none;">
+                <label for="additional-interests">Additional Areas You Are Interested in Receiving Alerts/Advisories</label>
+                <div class="form-group" id="additional-interests-selection">
+                    <div>
+                        <label>
+                            <input name="Interests[]" type="checkbox" class="form-check-input" value="Chemical"/>
+                             Chemical
+                         </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input name="Interests[]" type="checkbox" class="form-check-input" value="Commercial Facilities"/> Commercial Facilities
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input name="Interests[]" type="checkbox" class="form-check-input" value="Communications"/> Communications
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Critical Manufacturing"/>
+                             Critical Manufacturing
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Dams">
+                             Dams
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Defense Industrial Base"/>
+                             Defense Industrial Base
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Emergency Services"/> Emergency Services
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Energy">
+                             Energy
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Financial Services">
+                             Financial Services
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Food and Agriculture">
+                             Food and Agriculture
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Government Facilities">
+                             Government Facilities
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Healthcare and Public Health">
+                             Healthcare and Public Health
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Information Technology">
+                             Information Technology
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Nuclear Reactors, Materials, and Waste">
+                             Nuclear Reactors, Materials, and Waste
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Transportation Systems">
+                             Transportation Systems
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Water and Wastewater Systems">
+                             Water and Wastewater Systems
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <label for="subscription-preferences">Subscription Preferences *</label>
+            <dir class="panel panel-defaul" id="subscription-preferences">
+                <div class="form-group" id="subscription-options">
+                    <div>
+                        <label>
+                            <input name="subscription[]" type="checkbox" class="form-check-input" Value="Bulletin" />
+                             Weekly Bulletin
+                         </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input name="subscription[]" type="checkbox" class="form-check-input" value="Alerts"/>
+                             Alerts/Advisories
+                         </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input name="subscription[]" type="checkbox" class="form-check-input" Value="Events"/>
+                             Events/Trainings
+                         </label>
+                    </div>
+                </div>
+            </dir>
+
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+    </body>
+</html>
