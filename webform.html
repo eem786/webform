@@ -63,16 +63,15 @@
                 var textFields = ['inputFirstName', 'inputLastName', 'addressField',
                                   'titleField', 'inputMiddleInitial', 'OrganizationField', 'primarySectorSpecial'];
 
-                //for ( var i = 0; textFields.length; i++ ){
-                //    validateTextField(textFields[i]);
-                //}
-
-                alert('JUNK');
-                return false;
+                for ( var i = 0; i < textFields.length; i++ ){
+                    validateTextField(textFields[i]);
+                }
 
                 var phones = [ 'mobile', 'phone'];
-                for ( var i = 0; phones.length; i++){
-                    ivalidatePhone(phones[i]);
+                for ( var i = 0; i < phones.length; i++){
+                    if ( validatePhone(phones[i]) == false ){
+                        return false;
+                    }
                 }
 
                 // Verify that the user selected a subscription option
@@ -113,11 +112,13 @@
                 var toHide = [];
                 var toShow = [];
                 // Clear out all of the conditional fields upon changing the user's affiliation
-                var fieldsToClear = ["countySelect", "countrySelect", "jurisdiction", "primarySector", "primarySectorOther", "primarySectorSpecial", "stateSelect", "zipField"];
+                var fieldsToClear = ["countySelect", "countrySelect", "jurisdiction", "primarySector", "primarySectorOther", "primarySectorSpecial"];
                 if (affiliation == "International" ) {
 
                     toHide = [ "us-state-select", "county-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests"];
                     toShow = [ "country-select" ];
+                    fieldsToClear.push("stateSelect");
+                    fieldsToClear.push("zipField");
 
                 } else if ( affiliation == "Private Citizen" ){
                     toHide = ["country-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests" ];
@@ -181,6 +182,9 @@
 
             function validatePhone(whatNumber){
                 var phoneNumber = document.forms["myForm"][whatNumber].value;
+                if ( !phoneNumber || phoneNumber == ""){
+                    return true;
+                }
                 var re = /^(\+?\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
                 var OK = re.exec(phoneNumber);
                 if ( !OK ){
@@ -191,6 +195,9 @@
 
             function validateTextField(whatField){
                 var fieldValue = document.forms["myForm"][whatField].value;
+                if ( !fieldValue || fieldValue == ""){
+                    return true;
+                }
                 var re = /['"\(\)%&]/;
                 var containsInvlaidChars = re.exec(fieldValue);
 
