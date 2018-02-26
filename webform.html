@@ -62,16 +62,14 @@
                 // Double check all of the text fiels are still valid data
                 var textFields = ['inputFirstName', 'inputLastName', ''];
 
-                var subscriptionPreferences = document.getElementsByClassName('subscription');
 
-                for ( var i = 0; i < subscriptionPreferences.length; i++){
-                    alert('JUNK '+i);
-                }
-                //alert('JUNK');
-                //return false;
-                if ( subscriptionPreferences[0].checked && subscriptionPreferences[1].checked && subscriptionPreferences[2].checked ){
-                    alert('No subscription selected');
+                // Verify that the user selected a subscription option
+                var subscriptions = document.forms["myForm"].elements[ 'subscription'];
+
+                if ( subscriptions[0].checked == false && subscriptions[1].checked == false && subscriptions[2].checked == false){
+                    alert('No Subscription Preference Selected!');
                     return false;
+
                 }
             }
 
@@ -108,7 +106,7 @@
                     toShow = [ "country-select" ];
 
                 } else if ( affiliation == "Private Citizen" ){
-                    toHide = ["country-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special" ];
+                    toHide = ["country-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests" ];
                     toShow = ["us-state-select" ];
 
 
@@ -692,94 +690,94 @@
                 <div class="form-group" id="additional-interests-selection">
                     <div>
                         <label>
-                            <input name="Interests[]" type="checkbox" class="form-check-input" value="Chemical"/>
+                            <input name="Interests" type="checkbox" class="form-check-input" value="Chemical"/>
                              Chemical
                          </label>
                     </div>
                     <div>
                         <label>
-                            <input name="Interests[]" type="checkbox" class="form-check-input" value="Commercial Facilities"/> Commercial Facilities
+                            <input name="Interests" type="checkbox" class="form-check-input" value="Commercial Facilities"/> Commercial Facilities
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input name="Interests[]" type="checkbox" class="form-check-input" value="Communications"/> Communications
+                            <input name="Interests" type="checkbox" class="form-check-input" value="Communications"/> Communications
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Critical Manufacturing"/>
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Critical Manufacturing"/>
                              Critical Manufacturing
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Dams">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Dams">
                              Dams
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Defense Industrial Base"/>
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Defense Industrial Base"/>
                              Defense Industrial Base
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Emergency Services"/> Emergency Services
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Emergency Services"/> Emergency Services
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Energy">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Energy">
                              Energy
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Financial Services">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Financial Services">
                              Financial Services
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Food and Agriculture">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Food and Agriculture">
                              Food and Agriculture
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Government Facilities">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Government Facilities">
                              Government Facilities
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Healthcare and Public Health">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Healthcare and Public Health">
                              Healthcare and Public Health
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Information Technology">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Information Technology">
                              Information Technology
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Nuclear Reactors, Materials, and Waste">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Nuclear Reactors, Materials, and Waste">
                              Nuclear Reactors, Materials, and Waste
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Transportation Systems">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Transportation Systems">
                              Transportation Systems
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" name="Interests[]" class="form-check-input" value="Water and Wastewater Systems">
+                            <input type="checkbox" name="Interests" class="form-check-input" value="Water and Wastewater Systems">
                              Water and Wastewater Systems
                         </label>
                     </div>
@@ -791,19 +789,19 @@
                 <div class="form-group" id="subscription-options">
                     <div>
                         <label>
-                            <input name="subscription[]" type="checkbox" class="form-check-input" Value="Bulletin" />
+                            <input name="subscription" type="checkbox" class="form-check-input" Value="Bulletin" />
                              Weekly Bulletin
                          </label>
                     </div>
                     <div>
                         <label>
-                            <input name="subscription[]" type="checkbox" class="form-check-input" value="Alerts"/>
+                            <input name="subscription" type="checkbox" class="form-check-input" value="Alerts"/>
                              Alerts/Advisories
                          </label>
                     </div>
                     <div>
                         <label>
-                            <input name="subscription[]" type="checkbox" class="form-check-input" Value="Events"/>
+                            <input name="subscription" type="checkbox" class="form-check-input" Value="Events"/>
                              Events/Trainings
                          </label>
                     </div>
