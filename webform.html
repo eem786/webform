@@ -60,17 +60,31 @@
                 }
 
                 // Double check all of the text fiels are still valid data
-                var textFields = ['inputFirstName', 'inputLastName', ''];
+                var textFields = ['inputFirstName', 'inputLastName', 'addressField',
+                                  'titleField', 'inputMiddleInitial', 'OrganizationField', 'primarySectorSpecial'];
 
+                //for ( var i = 0; textFields.length; i++ ){
+                //    validateTextField(textFields[i]);
+                //}
+
+                alert('JUNK');
+                return false;
+
+                var phones = [ 'mobile', 'phone'];
+                for ( var i = 0; phones.length; i++){
+                    ivalidatePhone(phones[i]);
+                }
 
                 // Verify that the user selected a subscription option
                 var subscriptions = document.forms["myForm"].elements[ 'subscription'];
+
 
                 if ( subscriptions[0].checked == false && subscriptions[1].checked == false && subscriptions[2].checked == false){
                     alert('No Subscription Preference Selected!');
                     return false;
 
                 }
+
             }
 
             function hideFormFields(toHide){
@@ -99,7 +113,7 @@
                 var toHide = [];
                 var toShow = [];
                 // Clear out all of the conditional fields upon changing the user's affiliation
-                var fieldsToClear = ["countySelect", "countrySelect", "jurisdiction", "primarySector", "primarySectorOther", "primarySectorSpecial"];
+                var fieldsToClear = ["countySelect", "countrySelect", "jurisdiction", "primarySector", "primarySectorOther", "primarySectorSpecial", "stateSelect", "zipField"];
                 if (affiliation == "International" ) {
 
                     toHide = [ "us-state-select", "county-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests"];
@@ -194,7 +208,7 @@
     <body>
         <form id="myForm" onsubmit="return validateForm()"><!-- action="display.html" method="GET"> -->
            <div class="form-group">
-                <p style="color:red;display:inline">* Indicates Required Field</p>
+                <p style="color:red">* Indicates Required Field</p>
             </div>
            <div class="form-group">
                 <label for="affiliation">Affiliation <p style="color:red;display:inline">*</p></label>
@@ -595,7 +609,7 @@
             <div class="form-group" id="phone-field">
                 <label for="phone">Phone</label>
                 <!-- or set via JS -->
-                <input id="phone" type="text" class="form-control" onchange="validatePhone('phone')" />
+                <input id="phone" type="text" class="form-control"  onchange="validatePhone('phone')" />
             </div>
             <div class="form-group">
                 <label for="mobile">Mobile</label>
