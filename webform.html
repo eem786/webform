@@ -9,8 +9,70 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javaScript">
 
+            var fieldLabelMap = {'inputFirstName': 'First Name',
+                                 'inputMiddleInitial': 'Middle Initial',
+                                 'inputLastName': 'Last Name',
+                                 'inputEmail': 'Email Address',
+                                 'zipField': 'Zip/Postal Code',
+                                 'titleField': 'Title',
+                                 'primarySectorSpecial': 'Additional Functional Field',
+                                 'affiliation': 'Affiliation',
+                                 'OrganizationField': 'Organization/Agency',
+                                 'addressField': 'Address',
+                                 'primarySector': 'Primary Sector'};
+
             function validateForm(){
-                var interests = document.getElementById('additional-interests');
+
+                // Check for the existance of the mandatory fields
+                var affiliationElement = document.getElementById('affiliation')
+                var affiliationOption = affiliationElement.options[affiliationElement.selectedIndex].value;
+
+                if ( !affiliationOption ){
+                    alert('Missing Required Field: '+fieldLabelMap['affiliation']);
+                    return false;
+                }
+
+                var mandatoryFields = ['inputFirstName', 'inputLastName',
+                                       'inputEmail','zipField'];
+                //var mandatoryFields = mandatoryFieldsMap.keys();
+                for ( var i = 0; i < mandatoryFields.length; i++ ){
+                    var fieldName = mandatoryFields[i];
+                    var fieldValue = document.forms["myForm"][fieldName].value;
+
+
+
+                    if ( !fieldValue || fieldValue == ""){
+                        //alert(fieldValue);
+                        alert('Missing Required Field: '+fieldLabelMap[fieldName]);
+                        return false;
+                    }
+
+                }
+                // Conditionally required fields
+
+                if ( affiliationOption == 'Public Sector' || affiliationOption == 'Private Sector'){
+                    var sectorElement = document.getElementById('primarySector');
+                    var sectorOption = sectorElement.options[sectorElement.selectedIndex].value;
+                    if ( !sectorOption || sectorOption == ""){
+                        alert('Missing Required Field: '+fieldLabelMap['primarySector']);
+                        return false;
+                    }
+                }
+
+                // Double check all of the text fiels are still valid data
+                var textFields = ['inputFirstName', 'inputLastName', ''];
+
+                var subscriptionPreferences = document.getElementsByClassName('subscription');
+
+                for ( var i = 0; i < subscriptionPreferences.length; i++){
+                    alert('JUNK '+i);
+                }
+                //alert('JUNK');
+                //return false;
+                if ( subscriptionPreferences[0].checked && subscriptionPreferences[1].checked && subscriptionPreferences[2].checked ){
+                    alert('No subscription selected');
+                    return false;
+                }
             }
 
             function hideFormFields(toHide){
@@ -112,19 +174,16 @@
                 if ( !OK ){
                     alert('Invalid ' +whatNumber+' number, please use the format: (123)456-7890');
                     return false
-                } 
+                }
             }
 
             function validateTextField(whatField){
                 var fieldValue = document.forms["myForm"][whatField].value;
                 var re = /['"\(\)%&]/;
-                var form2field = { 'inputFirstName': 'First Name',
-                                   'inputMiddleInitial': 'Middle Initial',
-                                   'inputLastName': 'Last Name',
-                                   'titleField': 'Title'};
                 var containsInvlaidChars = re.exec(fieldValue);
+
                 if ( containsInvlaidChars ){
-                    alert('Invlid characters found in "'+form2field[whatField]+'", please do not include special characters!');
+                    alert('Invlid characters found in "'+fieldLabelMap[whatField]+'", please do not include special characters!');
                     return false;
                 }
             }
@@ -135,9 +194,12 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </head>
     <body>
-        <form id="myForm" onsubmit="return validateForm()" action="display.html" method="GET">
+        <form id="myForm" onsubmit="return validateForm()"><!-- action="display.html" method="GET"> -->
            <div class="form-group">
-                <label for="affiliation">Affiliation *</label>
+                <p style="color:red;display:inline">* Indicates Required Field</p>
+            </div>
+           <div class="form-group">
+                <label for="affiliation">Affiliation <p style="color:red;display:inline">*</p></label>
                 <select id="affiliation" class="form-control" onchange="setFormFields()">
                     <option value=""></option>
                     <option value="Private Sector">Private Sector</option>
@@ -147,20 +209,20 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="exampleInputEmail1">Email address *</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" required="true">
+                <label for="exampleInputEmail1">Email address <p style="color:red;display:inline">*</p></label>
+                <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
             </div>
             <div class="form-group">
-                <label for="inputFirstName">First Name</label>
-                <input type="text" class="form-control" id="inputFirstName" required="true" onchange="validateTextField('inputFirstName')">
+                <label for="inputFirstName">First Name <p style="color:red;display:inline">*</p></label>
+                <input type="text" class="form-control" id="inputFirstName" onchange="validateTextField('inputFirstName')">
             </div>
             <div class="form-group">
                 <label for="inputMiddleInitial">Middle Initial</label>
                 <input type="text" class="form-control" id="inputMiddleInitial" maxlength="1" onchange="validateTextField('inputMiddleInitial')">
             </div>
             <div class="form-group">
-                <label for="inputLastName">Last Name</label>
-                <input type="text" class="form-control" id="inputLastName" required="true" onchange="validateTextField('inputLastName')">
+                <label for="inputLastName">Last Name <p style="color:red;display:inline">*</p></label>
+                <input type="text" class="form-control" id="inputLastName" onchange="validateTextField('inputLastName')">
             </div>
             <div class="form-group">
                 <label for="suffix">Suffix</label>
@@ -180,12 +242,12 @@
                 <input type="text" class="form-control" id="titleField" onchange="validateTextField('titleField')">
             </div>
             <div class="form-group">
-                <label for="OrganizationField">Ogranization/Agency</label>
-                <input type="text" class="form-control" id="organizationField">
+                <label for="OrganizationField">Organization/Agency</label>
+                <input type="text" class="form-control" id="OrganizationField" onchange="validateTextField('OrganizationField')">
             </div>
             <div class="form-group">
                 <label for="addressField">Address</label>
-                <input type="text" class="form-control" id="addressField">
+                <input type="text" class="form-control" id="addressField" onchange="validateTextField('addressField')">
             </div>
             <div class="form-group">
                 <label for="cityField">City</label>
@@ -248,8 +310,8 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="zipField">Zip/Postal Code *</label>
-                <input type="text" class="form-control" id="zipField" required="true" pattern="[0-9]{5}">
+                <label for="zipField">Zip/Postal Code <p style="color:red;display:inline">*</p></label>
+                <input type="text" class="form-control" id="zipField" pattern="[0-9]{5}">
             </div>
             <div class="form-group" id="county-select" style="display:none;">
                 <label for="countySelect">County</label>
@@ -553,7 +615,7 @@
                 </select>
             </div>
            <div class="form-group" id="primary-sector-select" style="display:none;">
-                <label for="primarySector">Primary Sector</label>
+                <label for="primarySector">Primary Sector <p style="color:red;display:inline">*</p></label>
                 <Select class="form-control" id="primarySector" onchange="loadSectorSubCat()">
                     <option value="" selected="selected"></option>
                     <option value="Chemical">Chemical</option>
@@ -607,7 +669,7 @@
             </div>
             <div class="form-group" id="primary-sector-special" style="display:none;">
                 <label for="primarySectorSpecial">Additional Functional Area</label>
-                <input type="text" name="primarySectorSpecial">
+                <input type="text" class="form-control" name="primarySectorSpecial" onchange="validateTextField('primarySectorSpecial')">
             </div>
             <div class="form-group" id="emergency-services-select" style="display:none;">
                 <label for="emergencyServices">Emergency Services</label>
@@ -724,7 +786,7 @@
                 </div>
             </div>
             <br>
-            <label for="subscription-preferences">Subscription Preferences *</label>
+            <label for="subscription-preferences">Subscription Preferences <p style="color:red;display:inline">*</p></label>
             <dir class="panel panel-defaul" id="subscription-preferences">
                 <div class="form-group" id="subscription-options">
                     <div>
