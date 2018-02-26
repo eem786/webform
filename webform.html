@@ -32,6 +32,10 @@
                     return false;
                 }
 
+                if ( validateEmail() == false ){
+                    return false;
+                }
+
                 var mandatoryFields = ['inputFirstName', 'inputLastName',
                                        'inputEmail','zipField'];
                 //var mandatoryFields = mandatoryFieldsMap.keys();
@@ -83,6 +87,9 @@
                     return false;
 
                 }
+
+                alert('Successful page submission!');
+                return true;
 
             }
 
@@ -207,6 +214,16 @@
                 }
             }
 
+            function validateEmail(){
+                var emailAddress = document.forms["myForm"]["inputEmail"].value;
+                var re =  /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+                var OK = re.exec(emailAddress);
+                if ( !OK ){
+                    alert('Invalid Email Address entered');
+                    return false;
+                }
+            }
+
         </script>
 
         <!-- Latest compiled JavaScript -->
@@ -229,7 +246,7 @@
             </div>
             <div class="form-group">
                 <label for="exampleInputEmail1">Email address <p style="color:red;display:inline">*</p></label>
-                <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" maxlength="80">
+                <input type="text" class="form-control" id="inputEmail" maxlength="80" onchange="validateEmail()">
             </div>
             <div class="form-group">
                 <label for="inputFirstName">First Name <p style="color:red;display:inline">*</p></label>
