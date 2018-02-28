@@ -19,36 +19,47 @@
                                  'affiliation': 'Affiliation',
                                  'OrganizationField': 'Organization/Agency',
                                  'addressField': 'Address',
-                                 'primarySector': 'Primary Sector'};
+                                 'primarySector': 'Primary Sector',
+                                 'phone': 'Phone',
+                                 'mobile': 'Mobile'};
+
+            function getFormName(){
+                var form = document.getElementsByTagName('form');
+                return form[0].id;
+            }
 
             function validateForm(){
 
+                submitOk = "true";
+                alertMsg = "";
+
                 // Check for the existance of the mandatory fields
-                var affiliationElement = document.getElementById('affiliation')
-                var affiliationOption = affiliationElement.options[affiliationElement.selectedIndex].value;
+
+                var affiliationOption = document.forms[getFormName()]['affiliation'].value;
 
                 if ( !affiliationOption ){
-                    alert('Missing Required Field: '+fieldLabelMap['affiliation']);
-                    return false;
+                    alertMsg += "Missing Required Field: "+fieldLabelMap['affiliation']+"\n";
+                    submitOk = "false";
                 }
 
                 if ( validateEmail() == false ){
-                    return false;
+                    alertMsg += "Invalid value provided for: "+fieldLabelMap['inputEmail']+"\n";
+                    submitOk = "false";
                 }
 
                 var mandatoryFields = ['inputFirstName', 'inputLastName',
                                        'inputEmail','zipField'];
-                //var mandatoryFields = mandatoryFieldsMap.keys();
+
                 for ( var i = 0; i < mandatoryFields.length; i++ ){
                     var fieldName = mandatoryFields[i];
-                    var fieldValue = document.forms["myForm"][fieldName].value;
+                    var fieldValue = document.forms[getFormName()][fieldName].value;
 
 
 
                     if ( !fieldValue || fieldValue == ""){
                         //alert(fieldValue);
-                        alert('Missing Required Field: '+fieldLabelMap[fieldName]);
-                        return false;
+                        alertMsg += "Missing Required Field: "+fieldLabelMap[fieldName]+"\n";
+                        submitOk = "false";
                     }
 
                 }
@@ -58,8 +69,8 @@
                     var sectorElement = document.getElementById('primarySector');
                     var sectorOption = sectorElement.options[sectorElement.selectedIndex].value;
                     if ( !sectorOption || sectorOption == ""){
-                        alert('Missing Required Field: '+fieldLabelMap['primarySector']);
-                        return false;
+                        alertMsg += "Missing Required Field: "+fieldLabelMap['primarySector']+"\n";
+                        submitOk = "false";
                     }
                 }
 
@@ -68,29 +79,36 @@
                                   'titleField', 'inputMiddleInitial', 'OrganizationField', 'primarySectorSpecial'];
 
                 for ( var i = 0; i < textFields.length; i++ ){
-                    validateTextField(textFields[i]);
+                    validateTextField(textFields[i], 'false');
                 }
 
+                // Verify the phones once again
                 var phones = [ 'mobile', 'phone'];
                 for ( var i = 0; i < phones.length; i++){
-                    if ( validatePhone(phones[i]) == false ){
-                        return false;
+                    if ( validatePhone(phones[i], 'false') == false ){
+                        alertMsg += "Invalid Number provided for: "+fieldLabelMap[phones[i]]+"\n";
+                        submitOk = "false";
                     }
                 }
 
                 // Verify that the user selected a subscription option
-                var subscriptions = document.forms["myForm"].elements[ 'subscription'];
+                var subscriptions = document.forms[getFormName()].elements[ 'subscription'];
 
 
                 if ( subscriptions[0].checked == false && subscriptions[1].checked == false && subscriptions[2].checked == false){
-                    alert('No Subscription Preference Selected!');
-                    return false;
+                    alertMsg += "No Subscription Preference Selected!\n";
+                    submitOk = "false";
 
                 }
 
-                alert('Successful page submission!');
-                return true;
-
+                if ( submitOk == "false" ){
+                    alert(alertMsg);
+                    return false;
+                }
+                else {
+                    alert('Successful page submission!');
+                    return true;
+                }
             }
 
             function hideFormFields(toHide){
@@ -115,33 +133,31 @@
             }
 
             function setFormFields() {
-                var affiliation = document.forms["myForm"]["affiliation"].value;
+                var affiliation = document.forms[getFormName()]["affiliation"].value;
                 var toHide = [];
                 var toShow = [];
                 // Clear out all of the conditional fields upon changing the user's affiliation
-                var fieldsToClear = ["countySelect", "countrySelect", "jurisdiction", "primarySector", "primarySectorOther", "primarySectorSpecial"];
+                var fieldsToClear = ["countySelect", "countrySelect", "jurisdiction", "primarySector", "primarySectorOther", "primarySectorSpecial", "emergencyServices", "GovernmentFacilities"];
                 if (affiliation == "International" ) {
 
-                    toHide = [ "us-state-select", "county-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests"];
+                    toHide = [ "us-state-select", "county-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests", "emergency-services-select", "government-facilities-select", "us-state-select"];
                     toShow = [ "country-select" ];
                     fieldsToClear.push("stateSelect");
                     fieldsToClear.push("zipField");
 
                 } else if ( affiliation == "Private Citizen" ){
-                    toHide = ["country-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests" ];
-                    toShow = ["us-state-select" ];
+                    toHide = ["country-select", "jurisdiction-select", "primary-sector-select", "primary-sector-other", "primary-sector-special", "additional-interests",  "emergency-services-select", "government-facilities-select"];
+                    toShow = ["us-state-select", "zip-field-select" ];
 
 
                 } else {
 
-                    toHide = ["country-select", "county-select", "jurisdiction-select"];
-                    toShow = ["us-state-select", "primary-sector-select", "additional-interests"];
+                    toHide = ["country-select", "county-select", "jurisdiction-select", "government-facilities-select", ];
+                    toShow = ["us-state-select", "primary-sector-select", "additional-interests", "zip-field-select"];
 
                     if ( affiliation == "Public Sector"  ){
                         toShow.push("jurisdiction-select");
-                    }// else if ( affiliation == "Private Sector" ){
-
-                    //}
+                    }
                 }
 
                 hideFormFields(toHide);
@@ -152,7 +168,7 @@
             }
 
             function showNJCounties(){
-                var state = document.forms["myForm"]["stateSelect"].value;
+                var state = document.forms[getFormName()]["stateSelect"].value;
                 if (state == "NJ"){
                     showFormFields(["county-select"]);
                 } else {
@@ -162,23 +178,27 @@
             }
 
             function loadSectorSubCat(){
-                var sector = document.forms["myForm"]["primarySector"].value;
+                var sector = document.forms[getFormName()]["primarySector"].value;
                 if ( sector == "Other"){
                     showFormFields(["primary-sector-other"]);
-                    hideFormFields(["emergency-services-select"]);
-                    clearFormFields(["emergencyServices"]);
+                    hideFormFields(["emergency-services-select", "government-facilities-select"]);
+                    clearFormFields(["emergencyServices", "GovernmentFacilities"]);
                 } else if ( sector == "Emergency Services"){
                     showFormFields(["emergency-services-select"]);
-                    hideFormFields(["primary-sector-other"]);
-                    clearFormFields(["primarySectorOther", "primarySectorSpecial"]);
-                } else {
+                    hideFormFields(["primary-sector-other", "government-facilities-select"]);
+                    clearFormFields(["primarySectorOther", "primarySectorSpecial", "GovernmentFacilities"]);
+                } else if ( sector == "Government Facilities"){
                     hideFormFields(["emergency-services-select", "primary-sector-other", "primary-sector-special"]);
                     clearFormFields(["emergencyServices", "primarySectorOther", "primarySectorSpecial"]);
+                    showFormFields(["government-facilities-select"]);
+                } else {
+                    hideFormFields(["emergency-services-select", "primary-sector-other", "primary-sector-special", "government-facilities-select"]);
+                    clearFormFields(["emergencyServices", "primarySectorOther", "primarySectorSpecial", "GovernmentFacilities"]);
                 }
             }
 
             function loadOtherTextBox(){
-                var sectorSelect = document.forms["myForm"]["primarySectorOther"].value;
+                var sectorSelect = document.forms[getFormName()]["primarySectorOther"].value;
                 if ( sectorSelect == "Other"){
                     showFormFields(["primary-sector-special"]);
                 } else {
@@ -187,21 +207,23 @@
                 }
             }
 
-            function validatePhone(whatNumber){
-                var phoneNumber = document.forms["myForm"][whatNumber].value;
+            function validatePhone(whatNumber, verbose){
+                var phoneNumber = document.forms[getFormName()][whatNumber].value;
                 if ( !phoneNumber || phoneNumber == ""){
                     return true;
                 }
                 var re = /^(\+?\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
                 var OK = re.exec(phoneNumber);
                 if ( !OK ){
-                    alert('Invalid ' +whatNumber+' number, please use the format: (123)456-7890');
-                    return false
+                    if ( verbose && verbose == 'true' ){
+                        alert('Invalid ' +whatNumber+' number, please use the format: (123)456-7890');
+                    }
+                    return false;
                 }
             }
 
-            function validateTextField(whatField){
-                var fieldValue = document.forms["myForm"][whatField].value;
+            function validateTextField(whatField, verbose){
+                var fieldValue = document.forms[getFormName()][whatField].value;
                 if ( !fieldValue || fieldValue == ""){
                     return true;
                 }
@@ -209,17 +231,21 @@
                 var containsInvlaidChars = re.exec(fieldValue);
 
                 if ( containsInvlaidChars ){
-                    alert('Invlid characters found in "'+fieldLabelMap[whatField]+'", please do not include special characters!');
+                    if ( verbose && verbose == 'true' ){
+                        alert('Invlid characters found in "'+fieldLabelMap[whatField]+'", please do not include special characters!');
+                    }
                     return false;
                 }
             }
 
-            function validateEmail(){
-                var emailAddress = document.forms["myForm"]["inputEmail"].value;
+            function validateEmail(verbose){
+                var emailAddress = document.forms[getFormName()]["inputEmail"].value;
                 var re =  /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
                 var OK = re.exec(emailAddress);
                 if ( !OK ){
-                    alert('Invalid Email Address entered');
+                    if ( verbose && verbose == 'true' ){
+                        alert('Invalid Email Address entered');
+                    }
                     return false;
                 }
             }
@@ -236,7 +262,7 @@
             </div>
            <div class="form-group">
                 <label for="affiliation">Affiliation <p style="color:red;display:inline">*</p></label>
-                <select id="affiliation" class="form-control" onchange="setFormFields()">
+                <select name="Type" id="affiliation" class="form-control" onchange="setFormFields()">
                     <option value=""></option>
                     <option value="Private Sector">Private Sector</option>
                     <option value="Public Sector">Public Sector</option>
@@ -246,15 +272,15 @@
             </div>
             <div class="form-group">
                 <label for="exampleInputEmail1">Email address <p style="color:red;display:inline">*</p></label>
-                <input type="text" class="form-control" id="inputEmail" maxlength="80" onchange="validateEmail()">
+                <input type="text" class="form-control" id="inputEmail" maxlength="80" onchange="validateEmail('true')">
             </div>
             <div class="form-group">
                 <label for="inputFirstName">First Name <p style="color:red;display:inline">*</p></label>
-                <input type="text" class="form-control" id="inputFirstName" onchange="validateTextField('inputFirstName')" maxlength="40">
+                <input type="text" class="form-control" id="inputFirstName" onchange="validateTextField('inputFirstName', 'true')" maxlength="40">
             </div>
             <div class="form-group">
                 <label for="inputMiddleInitial">Middle Initial</label>
-                <input type="text" class="form-control" id="inputMiddleInitial" maxlength="1" onchange="validateTextField('inputMiddleInitial')">
+                <input type="text" class="form-control" id="inputMiddleInitial" maxlength="1" onchange="validateTextField('inputMiddleInitial', 'true')">
             </div>
             <div class="form-group">
                 <label for="inputLastName">Last Name <p style="color:red;display:inline">*</p></label>
@@ -275,15 +301,15 @@
             </div>
             <div class="form-group">
                 <label for="titleField">Title</label>
-                <input type="text" class="form-control" id="titleField" onchange="validateTextField('titleField')" maxlength="128">
+                <input type="text" class="form-control" id="titleField" onchange="validateTextField('titleField', 'true')" maxlength="128">
             </div>
             <div class="form-group">
                 <label for="OrganizationField">Organization/Agency</label>
-                <input type="text" class="form-control" id="OrganizationField" onchange="validateTextField('OrganizationField')" maxlength="255">
+                <input type="text" class="form-control" id="OrganizationField" onchange="validateTextField('OrganizationField', 'true')" maxlength="255">
             </div>
             <div class="form-group">
                 <label for="addressField">Address</label>
-                <input type="text" class="form-control" id="addressField" onchange="validateTextField('addressField')" maxlength="255">
+                <input type="text" class="form-control" id="addressField" onchange="validateTextField('addressField', 'true')" maxlength="255">
             </div>
             <div class="form-group">
                 <label for="cityField">City</label>
@@ -345,9 +371,9 @@
                     <option value="WY">WY</option>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="zip-field-select">
                 <label for="zipField">Zip/Postal Code <p style="color:red;display:inline">*</p></label>
-                <input type="text" class="form-control" id="zipField" pattern="[0-9]{5}">
+                <input type="text" class="form-control" id="zipField" onchange="validateTextField('zipField', 'true')" maxlength="20">
             </div>
             <div class="form-group" id="county-select" style="display:none;">
                 <label for="countySelect">County</label>
@@ -633,12 +659,12 @@
             <div class="form-group" id="phone-field">
                 <label for="phone">Phone</label>
                 <!-- or set via JS -->
-                <input id="phone" type="text" class="form-control"  onchange="validatePhone('phone')" />
+                <input id="phone" type="text" class="form-control"  onchange="validatePhone('phone', 'true')" />
             </div>
             <div class="form-group">
                 <label for="mobile">Mobile</label>
                 <!-- or set via JS -->
-                <input id="mobile" class="form-control" type="text" onchange="validatePhone('mobile')"/>
+                <input id="mobile" class="form-control" type="text" onchange="validatePhone('mobile', 'true')"/>
             </div>
             <div class="form-group" id="jurisdiction-select" style="display:none;">
                 <label for="jurisdiction">Jurisdiction</label>
@@ -705,7 +731,7 @@
             </div>
             <div class="form-group" id="primary-sector-special" style="display:none;">
                 <label for="primarySectorSpecial">Additional Functional Area</label>
-                <input type="text" class="form-control" name="primarySectorSpecial" onchange="validateTextField('primarySectorSpecial')" maxlength="255">
+                <input type="text" class="form-control" name="primarySectorSpecial" onchange="validateTextField('primarySectorSpecial', 'true')" maxlength="255">
             </div>
             <div class="form-group" id="emergency-services-select" style="display:none;">
                 <label for="emergencyServices">Emergency Services</label>
@@ -721,6 +747,17 @@
                     <option value="National Center for Missing &amp; Exploited Children">National Center for Missing &amp; Exploited Children</option>
                     <option value="Private Investigator">Private Investigator</option>
                     <option value="Private Security">Private Security</option>
+                </select>
+            </div>
+            <div class="form-group" id="government-facilities-select" style="display:none">
+                <label for="GovernmentFacilities">Government Facilities</label>
+                <select id="GovernmentFacilities" class="form-control">
+                    <option value=""></option>
+                    <option value="K-12">K-12</option>
+                    <option value="Higher Education">Higher Education</option>
+                    <option value="Law Enforcement">Law Enforcement</option>
+                    <option value="Library">Library</option>
+                    <option value="Military">Military</option>
                 </select>
             </div>
             <div class="panel panel-defaul" id="additional-interests" style="display:none;">
