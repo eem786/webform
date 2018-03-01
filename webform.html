@@ -92,14 +92,16 @@
                 }
 
                 // Verify that the user selected a subscription option
-                var subscriptions = document.forms[getFormName()].elements[ 'subscription'];
-
+                var subscriptions = document.getElementsByName("subscription");
 
                 if ( subscriptions[0].checked == false && subscriptions[1].checked == false && subscriptions[2].checked == false){
                     alertMsg += "No Subscription Preference Selected!\n";
                     submitOk = "false";
 
                 }
+
+                alert('submitOk is: '+submitOk);
+                //return false;
 
                 if ( submitOk == "false" ){
                     alert(alertMsg);
